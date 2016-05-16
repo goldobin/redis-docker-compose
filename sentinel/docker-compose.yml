@@ -1,0 +1,39 @@
+redis-1:
+  image: redis:3.0.5
+  ports:
+    - 6379
+
+  command: redis-server --appendonly no --save ""
+
+redis-2:
+  image: redis:3.0.5
+  ports:
+    - 6379
+    
+  links:
+    - redis-1
+
+  command: redis-server --slaveof redis-1 6379 --appendonly no --save ""
+
+redis-sentinel:
+  image: redis:3.0.5
+  ports:
+    - 26379
+
+  volumes:
+    - ./conf:/usr/local/etc/redis
+
+  links:
+    - redis-1
+    - redis-2
+        
+  command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+
+redis-cli:
+  image: redis:3.0.5
+  links:
+    - redis-1
+    - redis-2
+    - redis-sentinel
+
+  command: bash

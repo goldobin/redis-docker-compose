@@ -1,0 +1,21 @@
+redis-1:
+  image: redis:3.0.5
+  ports:
+    - 6379
+
+  command: redis-server --cluster-enabled yes --appendonly no --save ""
+
+redis-2:
+  image: redis:3.0.5
+  ports:
+    - 6379
+
+  command: redis-server --cluster-enabled yes --appendonly no --save ""
+
+redis-cli:
+  image: redis:3.0.5
+  links:
+    - redis-1
+    - redis-2
+
+  command: bash
